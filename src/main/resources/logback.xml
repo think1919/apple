@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+       <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+              <encoder>
+                  <pattern>%-10relative [%-30thread] %-8level %-80logger - %msg  %n</pattern>
+              </encoder>
+       </appender>
+
+       <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+           <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+               <fileNamePattern>master.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+               <maxHistory>30</maxHistory>
+           </rollingPolicy>
+           <encoder>
+               <pattern>%-10relative [%-30thread] %-8level %-80logger - %msg  %n</pattern>
+           </encoder>
+       </appender>
+
+
+       <logger name="org.springframework" level="INFO" />
+       <logger name="jdbc.sqltiming" level="INFO" />
+       <logger name="jdbc.sqlonly" level="OFF" />
+       <logger name="com.alibaba" level="ERROR"/>
+       <logger name="jdbc.resultset" level="ERROR" />
+       <logger name="jdbc.audit" level="ERROR" />
+    <logger name="com.sun.faces" level="INFO" />
+       <root level="INFO">
+              <appender-ref ref="STDOUT" />
+               <appender-ref ref="FILE" />
+       </root>
+
+</configuration>
