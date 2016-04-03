@@ -1,0 +1,106 @@
+buildscript {
+    ext {
+        springBootVersion = '1.4.0.M1'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'org.springframework:springloaded:1.2.5.RELEASE'
+    }
+}
+ext {
+    springVersion = '4.2.5.RELEASE'
+}
+group = 'cn.apple'
+version = '0.1-SNAPSHOT'
+
+
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'application'
+apply plugin: 'war'
+compileJava {
+    options.encoding = 'UTF-8'
+}
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+mainClassName = "cn.apple.WebApplication"
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+applicationDefaultJvmArgs = [
+        "-Dfile.encoding=UTF8"
+]
+compileJava {
+    options.encoding = 'UTF-8'
+}
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+
+dependencies {
+    compile 'com.h2database:h2:1.4.191'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.springframework.security.oauth:spring-security-oauth2:2.0.9.RELEASE'
+    compile 'mysql:mysql-connector-java:5.1.38'
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-jdbc')
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile('org.springframework.boot:spring-boot-devtools')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-websocket')
+    compile 'javax.servlet:jstl:1.2'
+    providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+    providedRuntime 'org.apache.tomcat.embed:tomcat-embed-jasper:8.0.32'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+
+war{
+    rootSpec.exclude  "META-INF/resources/WEB-INF/**"
+    webInf { from "src/main/resources/META-INF/resources/WEB-INF" }
+}
+
+task rebuildAll(group: 'alwaysRefresh')
+
+rebuildAll.dependsOn build
+
+processResources.setGroup('build')
+
+processTestResources.setGroup('build')
+
+gradle.taskGraph.whenReady { taskGraph ->
+    taskGraph.beforeTask {
+        switch (it.name) {
+            default:
+                if (taskGraph.hasTask(rebuildAll)) {
+                    it.outputs.upToDateWhen { false }
+                }
+        }
+    }
+}
